@@ -1,0 +1,40 @@
+<div class="columns">
+  <div class="column is-one-third">
+    <div class="card notification is-success">
+      <div class="title is-3">
+        Temperature
+      </div>
+      <div>
+        <p> {{latestTemp}} C</p>
+      </div>
+      <div>
+          <iframe
+            width="100%"
+            height="100%"
+            style="border: 0px"
+            src="https://thingspeak.com/channels/2345871/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+          ></iframe>
+    </div>
+  </div>
+  </div>
+  <div class="column is-one-third">
+    <div class="card notification is-success">
+      <div class="title is-3">
+        Dough height
+      </div>
+      <div>
+<iframe width="100%" height="100%" style="border: 0px" src="https://thingspeak.com/channels/2345871/charts/2?bgcolor=%23ffffff&color=%23d62020&results=100"></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="column is-one-third">
+    <div class="card notification is-success">
+      <div class="title is-3">
+        Ripeness
+      </div>
+      <div>
+<iframe width="100%" height="100%" style="border: 0px" src="https://thingspeak.com/channels/2345871/widgets/779606"></iframe>
+  </div>
+    </div>
+  </div>
+</div>
