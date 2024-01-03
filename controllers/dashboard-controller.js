@@ -1,17 +1,21 @@
-// import { readingStore } from "../models/readings-store.js";
+import { getLatestData, getLatestTimeData } from '../models/firebase-config.js';
 
 export const dashboardController = {
   async index(request, response) {
-    // readingStore.getRecentReadings((recentReadings) => {
-    //   const latestTemp = recentReadings.length > 0 ? recentReadings[recentReadings.length - 1].temperature : null;
+    try {
+      const latestData = await getLatestData();
+      const latestTimeData = await getLatestTimeData();
 
       const viewData = {
-        title: "Dough IoT Dashboard",
-        // latestTemp: latestTemp,
+        title: 'Dough IoT Dashboard',
+        temperature: latestData.temperature,
       };
 
-      console.log("dashboard rendering");
-      response.render("dashboard-view", viewData);
-    // }); 
+      console.log('dashboard rendering');
+      response.render('dashboard-view', viewData);
+    } catch (error) {
+      console.error('Error in dashboardController:', error);
+      response.status(500).send('Internal Server Error');
+    }
   },
 };
