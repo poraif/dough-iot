@@ -2,7 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import { engine } from "express-handlebars";
 import { router } from "./routes.js";
+import dotenv from "dotenv";  // Corrected import statement
 
+dotenv.config();
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
