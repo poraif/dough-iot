@@ -1,5 +1,5 @@
 
-import { getLatestData, getLatestTempAverage, getTimeToRipen } from '../models/firebase-config.js';
+import { getLatestData, getLatestTempAverage, getNumFeeds, getTimeToRipen } from '../models/firebase-config.js';
 
 export const dashboardController = {
   async index(request, response) {
@@ -7,12 +7,13 @@ export const dashboardController = {
       const latestData = await getLatestData();
       const averageTemp = await getLatestTempAverage();
       const ripenTime = await getTimeToRipen();
+      const numFeeds = await getNumFeeds();
 
       const viewData = {
         title: 'Dough IoT Dashboard',
         temperature: latestData.temperature,
-        transmission: latestData.transmission,
         averageTemp: averageTemp.toFixed(2),
+        numFeeds: numFeeds,
         ripenTime: ripenTime.toFixed(1) 
       };
 

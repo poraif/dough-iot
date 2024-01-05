@@ -20,8 +20,6 @@ let latestData = {
   temperature: null,
   distance: null,
   reading: null,
-  transmission: null,
-  timeElapsed: null
 };
 
 export const getLatestData = () => {
@@ -35,9 +33,7 @@ export const getLatestData = () => {
         const latestData = {
           temperature: latestReading.temperature,
           distance: latestReading.distance,
-          reading: latestReading.reading,
-          transmission: latestReading.transmission,
-          timeElapsed: latestReading.timeElapsed
+          reading: latestReading.reading
         };
 
         resolve(latestData);
@@ -50,91 +46,139 @@ export const getLatestData = () => {
   });
 };
 
+
+//loops backwards through readings
+//each feed starts readings at 0
+//so first checks for existing 0 reading
+// then, gets the average temp of readings from then to the prev. 0
+//means only returns average when a full feed cycle complete
 export const getLatestTempAverage = () => {
   return new Promise((resolve, reject) => {
     onValue(readingsRef, (snapshot) => {
       const data = snapshot.val();
-      if (!data) {
-        reject(new Error('No data available'));
-        return;
-      }
 
-      const readings = Object.values(data);
+      if (data) {
+        const readings = Object.values(data);
+        let totalTemp = 0;
+        let count = 0;
+        let foundFirstReadingZero = false;
 
-      let currentTransmission = null;
-      let consecutiveReadings = [];
-      let averageTemperature = 0;
+        for (let i = readings.length - 1; i >= 0; i--) {
+          const currentReading = readings[i];
 
-      readings.forEach(({ transmission, temperature }) => {
-        if (transmission === currentTransmission || currentTransmission === null) {
-          consecutiveReadings.push(temperature);
-        } else {
-          if (consecutiveReadings.length > 0) {
-            const averageTemperature =
-              consecutiveReadings.reduce((sum, temp) => sum + temp, 0) / consecutiveReadings.length;
-            resolve(averageTemperature);
-            return;
+          if (currentReading.reading === 0) {
+            if (foundFirstReadingZero) {
+              // Stop the loop when the second reading is 0
+              break;
+            } else {
+              foundFirstReadingZero = true;
+              continue; // Skip the first reading equal to 0
+            }
           }
-          currentTransmission = transmission;
-          consecutiveReadings = [temperature];
-        }
-      });
 
-      if (consecutiveReadings.length > 0) {
-      averageTemperature = consecutiveReadings.reduce((sum, temp) => sum + temp, 0) / consecutiveReadings.length;
-        resolve(averageTemperature);
+          if (foundFirstReadingZero) {
+            totalTemp += currentReading.temperature;
+            count++;
+          }
+        }
+
+        if (count > 1) {
+          const averageTemperature = totalTemp / count;
+          console.log('Average Temperature:', averageTemperature);
+          resolve(averageTemperature);
+        } else {
+          console.log('Not enough readings.');
+          resolve(0); // Resolve with null when there are not enough readings with reading=0
+        }
       } else {
-        reject(new Error('No data available'));
+        console.log('No data found.');
+        resolve(null); // Resolve with null when no data is present
       }
     }, (error) => {
+      console.error('Error reading data:', error);
       reject(error);
     });
   });
 };
 
+//simple counter for reading=0
+//includes first 0 because that will be a feed also
+export const getNumFeeds = () => {
+  return new Promise((resolve, reject) => {
+    onValue(readingsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Assuming readings is an array obtained from data
+        const readings = Object.values(data);
+        let numFeeds = 0;
+        
+        readings.forEach(({ reading }) => {
+          if (reading === 0) {
+            numFeeds++;
+          }
+        });
+
+        console.log('There have been ' + numFeeds + ' feeds');
+        resolve(numFeeds); // Resolve the promise with the count
+      } else {
+        console.log('No data found.');
+        resolve(0); // Resolve with 0 if no data is present
+      }
+    }, (error) => {
+      console.error('Error reading data:', error);
+      reject(error); // Reject the promise with the error
+    });
+  });
+};
+
+//returns time for starter to ripen based on counting readings returned between reading=0
+//as reading=0 is only returned after transmission stops/starter ripened, that will give all the values for that feed cycle
+//because there's fixed delay of readings of 15000 millis, can get the overall time from that
 export const getTimeToRipen = () => {
   return new Promise((resolve, reject) => {
     onValue(readingsRef, (snapshot) => {
       const data = snapshot.val();
 
-      if (!data) {
-        reject(new Error('No data available'));
-        return;
-      }
+      if (data) {
+        const readings = Object.values(data);
+        let delay = 15000;
+        let count = 0;
+        let foundFirstReadingZero = false;
+        let timeMillis = null;
+        let ripenTime = 0;
 
-      const readings = Object.values(data);
+        for (let i = readings.length - 1; i >= 0; i--) {
+          const currentReading = readings[i];
 
-      let currentTransmission = null;
-      let consecutiveTimes = [];
-      let timeTaken = null;
-      let ripenTime = 0;
-
-      readings.forEach(({ transmission, timeElapsed }) => {
-        if (transmission === currentTransmission || currentTransmission === null) {
-          consecutiveTimes.push(timeElapsed);
-        } else {
-          if (consecutiveTimes.length >= 2) {
-            let lastTime = consecutiveTimes.pop();
-            let firstTime = consecutiveTimes.shift();
-            timeTaken = lastTime - firstTime;
-            ripenTime = timeTaken / 3600000;
-            resolve(ripenTime);
+          if (currentReading.reading === 0) {
+            if (foundFirstReadingZero) {
+              // Stop the loop when the second reading is 0
+              break;
+            } else {
+              foundFirstReadingZero = true;
+              continue; // Skip the first reading equal to 0
+            }
           }
-          consecutiveTimes = [timeElapsed];
-        }
-        currentTransmission = transmission;
-      });
 
-      if (consecutiveTimes.length >= 2) {
-        let lastTime = consecutiveTimes.pop();
-        let firstTime = consecutiveTimes.shift();
-        timeTaken = lastTime - firstTime;
-        ripenTime = timeTaken / 3600000;
-        resolve(ripenTime);
+          if (foundFirstReadingZero) {
+            count++;
+          }
+        }
+
+        if (count > 1) {
+          timeMillis = count * delay;
+          ripenTime = timeMillis / 3600000;
+          resolve(ripenTime);
+        } else {
+          console.log('Not enough readings.');
+          resolve(0);
+        }
       } else {
-        reject(new Error('Insufficient data for calculating ripen time'));
+        console.log('No data found.');
+        resolve(0); //
       }
     }, (error) => {
+      console.error('Error reading data:', error);
       reject(error);
     });
   });
