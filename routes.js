@@ -8,5 +8,4 @@ router.get("/dashboard", dashboardController.index);
 
 router.get("/", dashboardController.index);
 
-
 router.get("/about", aboutController.index);

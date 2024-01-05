@@ -2,8 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import { engine } from "express-handlebars";
 import { router } from "./routes.js";
-import dotenv from "dotenv";  // Corrected import statement
 
+//handles environmental variables
+import dotenv from "dotenv"; 
 dotenv.config();
 
 const app = express();
