@@ -28,7 +28,7 @@
     "express"
   ],
   "engines": {
-    "node": "16.x.x"
+    "node": "16.14.2"
   },
   "prettier": {
     "singleQuote": false,

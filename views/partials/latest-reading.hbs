@@ -5,17 +5,18 @@
         Temperature
       </div>
       <div>
-        <p> {{ temperature }} C</p>
+        <iframe
+          width="100%"
+          height="100%"
+          style="border: 0px"
+          src="https://thingspeak.com/channels/2345871/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+        ></iframe>
       </div>
       <div>
-          <iframe
-            width="100%"
-            height="100%"
-            style="border: 0px"
-            src="https://thingspeak.com/channels/2345871/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
-          ></iframe>
+        <subtitle><b>Latest Average:</b> {{averageTemp}} C</subtitle>
+      </div>
+      <br />
     </div>
-  </div>
   </div>
   <div class="column is-one-third">
     <div class="card notification is-success">
@@ -23,7 +24,23 @@
         Dough height
       </div>
       <div>
-<iframe width="100%" height="100%" style="border: 0px" src="https://thingspeak.com/channels/2345871/charts/2?bgcolor=%23ffffff&color=%23d62020&results=100"></iframe>
+        <iframe
+          width="100%"
+          height="100%"
+          style="border: 0px"
+          src="https://thingspeak.com/channels/2345871/charts/2?bgcolor=%23ffffff&color=%23d62020&results=100"
+        ></iframe>
+      </div>
+      <div>
+        <subtitle> <b>Latest Ripen time:</b> {{latestRipenTime}} hrs</subtitle>
+        <p>
+          <b>Prev ripen:</b>
+          {{secondRipenTime}}
+          hrs |
+          <b>Ripen 3:</b>
+          {{thirdRipenTime}}
+          hrs
+        </p>
       </div>
     </div>
   </div>
@@ -33,8 +50,17 @@
         Ripeness
       </div>
       <div>
-<iframe width="100%" height="100%" style="border: 0px" src="https://thingspeak.com/channels/2345871/widgets/779606"></iframe>
-  </div>
+        <iframe
+          width="100%"
+          height="100%"
+          style="border: 0px"
+          src="https://thingspeak.com/channels/2345871/widgets/779606"
+        ></iframe>
+      </div>
+      <div>
+        <subtitle> <b>Total feeds completed:</b> {{numFeeds}}</subtitle>
+      </div>
+      <br />
     </div>
   </div>
 </div>
