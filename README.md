@@ -16,13 +16,13 @@ This sensor kit and accompanying web app allows users to effectively monitor the
 6.	Readings automatically stop when starter is ready.
    
 ## Technologies
-•	Arduino IDE
-•	Node.js – Express framework with Handlebars templating language (built using Glitch)
-•	Thingspeak – handles HTTP posts from sensors
-•	IFTTT - push notifications via HTTP request. 
-•	Firebase Realtime Database
-•	Arduino IoT Starter kit (using MKR1010 board)
-•	HC-SR04 Ultrasonic sensor
+-	Arduino IDE
+-	Node.js – Express framework with Handlebars templating language (built using Glitch)
+-	Thingspeak – handles HTTP posts from sensors
+-	IFTTT - push notifications via HTTP request. 
+-	Firebase Realtime Database
+-	Arduino IoT Starter kit (using MKR1010 board)
+-	HC-SR04 Ultrasonic sensor
 •	Mobile device to receive push notifications
 
 ## Installation
